@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAHENDER KUMAR | AI & Business</title>
+    <!-- Icons & Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. VARIABLES --- */
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(20, 20, 20, 0.6);
+            --border: rgba(255, 255, 255, 0.1);
+            --accent: #b0fb5d; /* Neon Green */
+            --accent-glow: 0 0 20px rgba(176, 251, 93, 0.4);
+            --text-main: #fff;
+        }
+
+        /* RESET CURSOR */
+        * { box-sizing: border-box; cursor: none; }
+        
+        /* Make inputs clickable despite custom cursor */
+        input, textarea, button, a { cursor: none; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- 2. AURORA BACKGROUND --- */
+        .aurora-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: #000;
+            overflow: hidden;
+        }
+        .blob { position: absolute; filter: blur(80px); opacity: 0.6; animation: float 10s infinite alternate; }
+        .blob-1 { top: 10%; left: 10%; width: 300px; height: 300px; background: #4c1d95; }
+        .blob-2 { bottom: 20%; right: 10%; width: 250px; height: 250px; background: #059669; animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 200px; height: 200px; background: #b0fb5d; opacity: 0.2; animation-delay: -2s; }
+        @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, -20px); } }
+
+        /* --- 3. CUSTOM CURSOR --- */
+        .cursor-dot {
+            width: 8px; height: 8px; background: var(--accent);
+            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000;
+            box-shadow: 0 0 10px var(--accent);
+        }
+        .cursor-outline {
+            width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%; position: fixed; pointer-events: none; z-index: 10000;
+            transition: all 0.1s ease;
+        }
+
+        /* --- 4. LAYOUT --- */
+        .container {
+            max-width: 1000px; margin: 60px auto 100px; padding: 20px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+        }
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+
+        .box {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 24px; padding: 25px; backdrop-filter: blur(20px);
+            position: relative; transform-style: preserve-3d; transform: perspective(1000px);
+        }
+        .js-tilt-glare { border-radius: 24px; }
+
+        .profile { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; }
+        .pfp { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--accent); object-fit: cover; box-shadow: var(--accent-glow); }
+        .status-badge { background: rgba(176, 251, 93, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-flex; width: fit-content; text-transform: uppercase; }
+
+        .socials { grid-column: span 1; grid-row: span 2; display: flex; flex-direction: column; gap: 10px; }
+        .social-btn { background: rgba(255,255,255,0.05); color: #fff; display: flex; align-items: center; justify-content: center; height: 100%; border-radius: 16px; font-size: 24px; transition: 0.3s; border: 1px solid transparent; text-decoration: none; }
+        .social-btn:hover { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: var(--accent-glow); }
+
+        .clock { grid-column: span 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'JetBrains Mono'; font-weight: bold; background: rgba(0,0,0,0.3); }
+        .map { grid-column: span 1; background: #1a1a1a; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px; font-size: 12px; color: #aaa; }
+
+        .terminal { grid-column: span 2; background: #080808; font-family: 'JetBrains Mono'; font-size: 13px; color: #ccc; border-left: 3px solid var(--accent); display: flex; flex-direction: column; justify-content: center; }
+
+        .contact-btn-box { grid-column: span 2; background: var(--accent); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #000; font-weight: 900; font-size: 20px; text-transform: uppercase; transition: 0.3s; }
+        .contact-btn-box:hover { letter-spacing: 2px; box-shadow: var(--accent-glow); }
+
+        /* --- MARQUEE --- */
+        .marquee-container { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--accent); color: #000; padding: 10px 0; overflow: hidden; white-space: nowrap; font-weight: bold; font-family: 'JetBrains Mono'; font-size: 16px; z-index: 50; }
+        .marquee-content { display: inline-block; animation: scroll 15s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- DOCK --- */
+        .dock-container { position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); padding: 12px 25px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1); display: flex; gap: 20px; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .dock-item { font-size: 22px; color: #fff; transition: 0.2s; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+        .dock-item:hover { font-size: 35px; color: var(--accent); transform: translateY(-10px); }
+
+        /* --- CONTACT FORM MODAL --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal { background: #111; width: 90%; max-width: 400px; padding: 40px; border-radius: 24px; border: 1px solid #333; position: relative; animation: slideUp 0.3s ease; }
+        .close-btn { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 24px; cursor: pointer; }
+
+        input, textarea { width: 100%; background: #222; border: 1px solid #444; color: #fff; padding: 15px; margin-bottom: 15px; border-radius: 12px; font-family: inherit; outline: none; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--accent); background: #000; }
+        
+        .submit-btn { width: 100%; padding: 15px; background: var(--accent); border: none; font-weight: bold; border-radius: 12px; cursor: pointer; text-transform: uppercase; font-size: 16px; color: #000; transition: 0.3s; }
+        .submit-btn:hover { box-shadow: 0 0 15px var(--accent); transform: scale(1.02); }
+
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <!-- AURORA BG -->
+    <div class="aurora-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- CURSOR -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- GRID -->
+    <div class="container">
+        
+        <div class="box profile" data-tilt>
+            <div style="display:flex; align-items:center; gap:20px;">
+                <img src="https://i.postimg.cc/XY3mpCTV/generated_image_(3).png" class="pfp" alt="Mahender Kumar">
+                <div>
+                    <div class="status-badge">Available for Work</div>
+                    <h1 style="margin:5px 0 0 0; font-size:26px; text-transform: uppercase; line-height: 1.1;">Mahender<br>Kumar</h1>
+                </div>
+            </div>
+            <div>
+                <p style="color:#aaa; font-size:14px; line-height:1.6; margin-bottom: 5px;">
+                    Student & AI Expert based in <span style="color:white; font-weight:bold;">New Delhi</span>. 
+                    Merging Business Strategy with Viral Content.
+                </p>
+                <div style="font-size: 11px; color: var(--accent); font-weight: bold; margin-top: 10px;">
+                    // YOUTUBE • BUSINESS • AI TOOLS
+                </div>
+            </div>
+        </div>
+
+        <div class="box socials" data-tilt>
+            <a href="https://www.instagram.com/___mahender____96/" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
+            <a href="https://youtube.com/@mahendra....?si=7fuP7xKSoNS90LaP" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
+            <a href="javascript:void(0)" onclick="openModal()" class="social-btn"><i class="fas fa-envelope"></i></a>
+        </div>
+
+        <div class="box clock" id="clock-box" data-tilt>
+            <div style="font-size: 28px; letter-spacing: 2px;" id="clock">00:00</div>
+            <div style="font-size: 12px; color: #888; margin-top: 5px;">NEW DELHI</div>
+        </div>
+        
+        <div class="box map" data-tilt style="background: radial-gradient(#222, #000);">
+            <span style="background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 8px;">📍 INDIA</span>
+        </div>
+
+        <div class="box terminal" data-tilt>
+            <div style="color:#555; margin-bottom:10px;">// ai_expert.py</div>
+            <div style="color:var(--accent);">class Mahender:</div>
+            <div style="padding-left:15px;">def get_skills(self):</div>
+            <div style="padding-left:30px;">return ["Business", "AI Tools", "Content"]</div>
+            <div style="padding-left:15px; margin-top:5px; color:#fff;">>> "System Operational 🚀"</div>
+        </div>
+
+        <div class="box contact-btn-box" onclick="openModal()" data-tilt>
+            Let's Talk <i class="fas fa-arrow-right" style="margin-left:10px;"></i>
+        </div>
+
+    </div>
+
+    <!-- DOCK -->
+    <div class="dock-container">
+        <a href="#" class="dock-item"><i class="fas fa-home"></i></a>
+        <a href="https://youtube.com/@mahendra....?si=7fuP7xKSoNS90LaP" target="_blank" class="dock-item"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.instagram.com/___mahender____96/" target="_blank" class="dock-item"><i class="fab fa-instagram"></i></a>
+        <div class="dock-item" onclick="openModal()"><i class="fas fa-envelope"></i></div>
+    </div>
+
+    <!-- MARQUEE -->
+    <div class="marquee-container">
+        <div class="marquee-content">
+            BUSINESS STRATEGY • AI AUTOMATION • VIDEO EDITING • AI TOOLS EXPERT • CONTENT CREATION • NEW DELHI • BUSINESS STRATEGY • AI AUTOMATION • VIDEO EDITING • AI TOOLS EXPERT • CONTENT CREATION • NEW DELHI •
+        </div>
+    </div>
+
+    <!-- CONTACT FORM MODAL (NOW WORKING!) -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="close-btn" onclick="closeModal()">&times;</div>
+            <h2 style="margin-top:0; text-transform:uppercase;">Send Message</h2>
+            <p style="color: #888; font-size: 14px; margin-bottom: 20px;">
+                I will receive this directly in my inbox.
+            </p>
+            
+            <!-- REAL WORKING FORM -->
+            <form action="https://formsubmit.co/mk7928046@gmail.com" method="POST">
+                <!-- Redirect to same page after success (Optional) -->
+                <input type="hidden" name="_next" value="https://yourwebsite.com/thanks.html">
+                <input type="hidden" name="_captcha" value="false">
+                
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" rows="3" placeholder="Write your message..." required></textarea>
+                
+                <button type="submit" class="submit-btn">SEND MESSAGE 🚀</button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <script>
+        // Clock
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+        }, 1000);
+
+        // Custom Cursor
+        const dot = document.querySelector('.cursor-dot');
+        const outline = document.querySelector('.cursor-outline');
+        window.addEventListener('mousemove', (e) => {
+            dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+            outline.animate({ left: e.clientX + 'px', top: e.clientY + 'px' }, { duration: 500, fill: "forwards" });
+        });
+
+        // Modal Logic
+        function openModal() { document.getElementById('modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    </script>
+
+</body>
+</html>
